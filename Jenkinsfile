@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/rhvreddy/aI-powered.git'
+                git branch: 'main', credentialsId: 'github-credentials', url: 'https://github.com/rhvreddy/aI-powered.git'
             }
         }
 
