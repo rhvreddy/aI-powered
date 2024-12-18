@@ -1,5 +1,5 @@
 import pytest
-from app import app  # Ensure this is correct
+from app import app  # This should work after fixing the __init__.py import
 
 @pytest.fixture
 def client():
