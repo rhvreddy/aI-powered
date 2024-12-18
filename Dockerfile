@@ -7,20 +7,14 @@ WORKDIR /app
 # Copy the entire project to /app
 COPY . /app
 
-# List the files in /app to ensure main.py is there (for debugging)
+# List the files in /app to ensure main.py is there
 RUN ls -l /app
 
-# Install dependencies from requirements.txt and pytest
-RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies from requirements.txt
+RUN pip install -r requirements.txt
 
-# Install pytest separately if you want it as part of your Docker image
-RUN pip install pytest
-
-# Expose port (for your application)
+# Expose port
 EXPOSE 5000
-
-# Optionally, run tests if needed (remove if not required)
-# RUN pytest --maxfail=1 --disable-warnings -q
 
 # Start the application
 CMD ["python", "/app/main.py"]
