@@ -11,9 +11,11 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh '''
-                    python3 -m venv venv
-                    . venv/bin/activate
-                    pip install -r requirements.txt
+                    sudo apt update
+                    sudo apt install -y python3.8-venv  # Ensure the venv package is installed
+                    python3 -m venv venv  # Create a virtual environment
+                    . venv/bin/activate  # Activate the virtual environment
+                    pip install -r requirements.txt  # Install dependencies
                 '''
             }
         }
@@ -21,8 +23,8 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
-                    . venv/bin/activate
-                    pytest test_app.py
+                    . venv/bin/activate  # Activate the virtual environment
+                    pytest test_app.py  # Run the tests
                 '''
             }
         }
