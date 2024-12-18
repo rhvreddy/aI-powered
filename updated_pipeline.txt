@@ -1,0 +1,60 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', credentialsId: 'github-credentials', url: 'https://github.com/rhvreddy/aI-powered.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Activate the base conda environment and install dependencies
+                    sh '''#!/bin/bash -l
+                    source /home/harsha/anaconda3/bin/activate base
+                    pip install -r requirements.txt
+                    pip install pytest
+                    '''
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    // Set PYTHONPATH to include the root and app directories
+                    sh '''#!/bin/bash -l
+                    source /home/harsha/anaconda3/bin/activate base
+                    export PYTHONPATH=$PYTHONPATH:/var/lib/jenkins/workspace/AI-powered_CI_CD:/var/lib/jenkins/workspace/AI-powered_CI_CD/app
+                    echo "PYTHONPATH: $PYTHONPATH"  # Debug line to confirm PYTHONPATH
+                    ls -la /var/lib/jenkins/workspace/AI-powered_CI_CD/app  # Debug line to check app directory contents
+                    pytest test_main.py
+                    '''
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t simple-pipeline-app .'
+            }
+        }
+
+        stage('Deploy to Test Environment') {
+            steps {
+                sh 'docker run -d -p 5000:5000 simple-pipeline-app'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline executed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
